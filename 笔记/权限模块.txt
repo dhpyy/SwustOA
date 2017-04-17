@@ -1,0 +1,210 @@
+=================
+
+功能确定：
+
+
+初始数据： 超级管理员（不能被修改）
+----
+（增）	   权限数据（不能被修改）
+
+
+
+分配权限： 给角色分配权限 ----> 修改role						
+----
+（改）     树状显示 ： 
+		       语义标签  ：列表 
+
+	               修改内容  ：treeview插件
+
+		       注册监听器：同步操作元素的所有相应下级权限
+
+				   同步选中元素的所有相应上级权限
+
+
+使用权限：登 录  权 限：
+ （查）	  ----	         登录 : 查询到 ？session:fieldError
+
+		         注销 : session.remove
+
+			 问题： 重启tomcat后缓存的session消失
+
+			        让实体类实现Serializable接口
+
+
+	  左栏权限显示：
+	  --------       写application(缓存-不会改变的权限数据)：InitialappListener
+
+	  
+		         显示 权限：
+				      根据当前显示权限的名字 判断 当前登录用户是否具有该权限
+							----              ----
+			              user类增添权限判断方法：hasPrivilegeByName(String name)
+
+				      控制显示语句<s:if>
+
+			      
+		
+			 懒加载问题: 
+				      过滤器对 监听器 不起作用 
+
+			              session中保存的user的 级联 查询操作，在其他请求中无法执行
+
+				      -----> 配置hbm.xml相关的懒加载属性
+
+
+		
+
+
+	  右侧链接显示： 显示 权限：   根据链接的url 判断 当前登录用户是否具有该权限
+          --------                               ---              ----
+	                               user类增添权限判断方法：hasPrivilegeByUrl(String priUrl)
+				       
+				       重写自定义标签对应的类的方法doEndTag() 以控制标签的显示
+
+
+
+
+	  拦 截  请 求：  
+	  ----	        请求 拦截器：  根据请求的信息 判断 是否进行拦截
+			     -----	          
+				       未登录 拦截，转登录页面
+
+			               已登录 权限判断
+
+			 
+			申请登录请求： 未登录也可以使用，不用拦截 
+			                                 --------      
+				       /user_login
+
+
+		        基 本  请 求： 登陆后就可以使用，不用判断权限
+		      （注销、主页等）                   -----------
+		                       allPrivilegeUrls的补集
+
+
+
+
+
+
+
+=================
+
+分析设计：
+
+
+分层结构：Action  +   Service( 原Service + Dao )
+----   
+
+                hbm.xml
+实体类：权限类 ----------> 权限表
+------
+
+
+
+==================						
+
+数据访问层：       
+----          初始数据Installer类            分配权限roleService接口          登录权限userService接口        左栏显示privilegeService接口     基本请求privilegeService接口
+			                                        ----                             
+	      sessionFactory( 取得session )				      findByNameAndPassword()	     findTopList()                    findAllUrls()
+
+	      install()
+
+		
+
+	  
+  
+		
+
+
+表现层：
+----
+         分配权限roleAction类          登录权限userAction类           左栏显示InitialAppListener类			 主页显示homeAction类
+			   --
+	 privilegeIds						      contextInitialized(sce) :
+
+	 setprivilegeIds()						 applicationContext( 取得已有容器对象 )	  
+	
+	 getprivilegeIds()						 privilegeService( 取得privilegeService对象 )	  
+
+
+ 
+	 控制 ：	 请求		         (listener方法)	         action方法 ------------- 返回值                    页面
+   	 ----    -------------------------------------------------------------------------------------------------------------------------
+	       
+		分配权限页面  _setPrivilegeUI				 setPrivilegeUI()      setPrivilegeUI          setPrivilegeUI.jsp
+
+
+		提交权限分配  _setPrivilege				 setPrivilege()        toList                  新请求
+
+
+
+		登 录  页 面  _loginUI					 loginUI()             loginUI                 loginUI.jsp
+
+
+		申 请  登 录  _login					 login()               toIndex                 新请求
+
+
+		注        销  _logout					 logout()              logout                  logout.jsp         
+
+	
+		
+
+		左 栏  显 示  _left	      contextInitialized()	 left()		       left                    left.jsp
+
+
+
+		右栏显示       _right					 right()               right                   right.jsp
+
+		下栏显示       _bottom					 bottom()              bottom                  bottom.jsp
+
+		左栏显示       _left					 left()                left                    left.jsp
+
+
+
+
+业务逻辑层：
+    ----
+              (listener方法 ----------------- 操作)				 action方法 ----------------- 操作						    页面
+       ---------------------------------------____------------------------------------------------------------____-------------------------------------------------------------
+								                              
+        									setPrivilegeUI()	      读数据库(回显数据)                                   读取ValueStack
+		
+													      写到ValueStack                                       读session
+									  
+													      读数据库(修改对象)                                   读application
+																   
+													      写到ValueStack                                       产生新请求
+
+													      读数据库(级联属性)
+
+													      写到parameter属性
+
+								
+										 setPrivilege()		      读数据库(修改对象)                                                                      
+								  
+													      读数据库(要修改属性)                
+																	   
+												              写到修改对象
+
+												              写数据库
+
+
+
+										 login()		      读数据库(登录用户)                                   
+				   
+																      
+													      写到->查询到 ？session:fieldError
+
+
+
+										 logout			      写session
+
+	 
+
+	                     
+	    contextInitialized()          读数据库(回显数据:顶层权限)       	left()			      无						   控制显示<s:if>
+	
+				          写application
+
+						 
