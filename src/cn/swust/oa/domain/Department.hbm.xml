@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping	package="cn.swust.oa.domain">
+
+	<class name="Department" table="swust_department">
+		<id name="id">
+			<generator class="native"/>
+		</id>
+		<property name="name" />
+		<property name="description" />
+		
+		<!-- :User 一对多  由User方建立外键 -->
+		<set name="users">
+			<key column="departmentId"></key>
+			<one-to-many class="User"/>
+		</set>
+		
+		<!-- :Department(上级) 多对一  外键名：parentId -->
+		<many-to-one name="parent" class="Department" column="parentId"></many-to-one>
+		
+		<!-- :Department(下级) 一对多 外键由下级方创建 -->
+		<set name="children" cascade="delete" order-by="id ASC">     <!-- 级联删除 -->
+			<key column="parentId"></key>                            <!-- :order-by属性 指定 sql语句的 "order by ..." 子句 -->
+			<one-to-many class="Department"/>                        <!-- 使级联查询能得到有序的set集合 -->
+		</set>
+		
+	</class>
+
+</hibernate-mapping>

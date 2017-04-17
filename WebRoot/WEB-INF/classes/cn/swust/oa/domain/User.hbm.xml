@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+
+<hibernate-mapping	package="cn.swust.oa.domain">
+
+	<class name="User" table="swust_user">
+		<id name="id">
+			<generator class="native"/>
+		</id>
+		<property name="loginName" />
+		<property name="password" />
+		<property name="name" />
+		<property name="gender" />
+		<property name="phoneNumber" />
+		<property name="email" />
+		<property name="description" />
+		
+		<!-- :Department 多对一  外键名：departmentId -->
+		<many-to-one name="department" column="departmentId"></many-to-one>
+		
+		<!-- :Role 多对多  关联表：swust_user_role -->
+		<set name="roles" table="swust_user_role" lazy="false">
+			<key column="userId"></key>
+			<many-to-many class="Role" column="roleId"></many-to-many>
+		</set>
+	</class>
+
+</hibernate-mapping>
