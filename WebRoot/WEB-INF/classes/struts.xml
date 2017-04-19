@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+    <!-- 配置开发者模式 -->
+    <constant name="struts.devMode" value="ture" />
+	<!-- 配置URL扩展名 -->
+	<constant name="struts.action.extension=action" value="action"></constant>
+	<!-- 配置返回页面主题 -->
+	<constant name="struts.ui.theme" value="simple"></constant>
+
+
+    <package name="default" namespace="/" extends="struts-default">
+		<!-- 拦截器集 -->
+    	<interceptors>
+    		<!-- 声明权限拦截器 -->
+    		<interceptor name="checkPrivilege" class="cn.swust.oa.util.CheckPrivilegeInterceptor"></interceptor>
+    		<!-- 加入默认拦截器栈 -->
+    		<interceptor-stack name="defaultStack">
+    			<interceptor-ref name="checkPrivilege"></interceptor-ref>
+    			<interceptor-ref name="defaultStack"></interceptor-ref>
+    		</interceptor-stack>
+    	</interceptors>
+    	
+    	<!-- 全局的result配置 -->
+    	<global-results>
+    		<result name="loginUI">/WEB-INF/jsp/userAction/loginUI.jsp</result>  
+    		<result name="noPrivilegeError">noPrivilegeError.jsp</result>  
+    	</global-results>
+    	
+        <action name="test" class="testAction">  <!-- 未整合Spring之前加上class写上类的全名 -->
+        	<result>test.jsp</result>
+        </action>
+        
+        <!-- 转发岗位模块请求 -->
+        <action name="role_*" class="roleAction" method="{1}">
+        	<result name="list">/WEB-INF/jsp/roleAction/list.jsp</result>
+        	<result name="saveUI">/WEB-INF/jsp/roleAction/saveUI.jsp</result>
+        	<result name="setPrivilegeUI">/WEB-INF/jsp/roleAction/setPrivilegeUI.jsp</result>
+        	<result name="toList" type="redirectAction">role_list</result>
+        </action>
+        
+        <!-- 转发部门模块请求 -->
+        <action name="department_*" class="departmentAction" method="{1}">
+        	<result name="list">/WEB-INF/jsp/departmentAction/list.jsp</result>
+        	<result name="saveUI">/WEB-INF/jsp/departmentAction/saveUI.jsp</result>
+        	<result name="toList" type="redirectAction">department_list?parentId=${parentId}</result>
+        </action>
+        
+        <!-- 转发用户模块请求 -->
+        <action name="user_*" class="userAction" method="{1}">
+        	<result name="list">/WEB-INF/jsp/userAction/list.jsp</result>
+        	<result name="saveUI">/WEB-INF/jsp/userAction/saveUI.jsp</result>
+        	<result name="toList" type="redirectAction">user_list</result>
+        	
+        	<result name="logout">/WEB-INF/jsp/userAction/logout.jsp</result>    <!-- 登录权限功能,loginUI在全局结果集 -->
+        	<result name="toIndex" type="redirectAction">home_index</result>	 <!-- 重定向到主页 -->
+        </action>
+        
+        <!-- 转发主页显示模块请求 -->
+        <action name="home_*" class="homeAction" method="{1}">
+        	<result name="{1}">/WEB-INF/jsp/homeAction/{1}.jsp</result>		<!-- 使用通配符简写result -->
+        </action>
+        
+        <!-- 转发版块管理模块请求 -->
+        <action name="forumManage_*" class="forumManageAction" method="{1}">
+        	<result name="list">/WEB-INF/jsp/forumManageAction/list.jsp</result>
+        	<result name="saveUI">/WEB-INF/jsp/forumManageAction/saveUI.jsp</result>
+        	<result name="toList" type="redirectAction">forumManage_list</result>
+        </action>
+        
+    </package>
+
+    <!-- Add packages here -->
+
+</struts>
