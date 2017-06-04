@@ -9,14 +9,14 @@ import org.springframework.stereotype.Controller;
 
 import com.opensymphony.xwork2.ActionContext;
 
-import cn.swust.oa.base.BaseAction;
+import cn.swust.oa.base.ModelDrivenBaseAction;
 import cn.swust.oa.domain.Department;
 import cn.swust.oa.domain.Role;
 import cn.swust.oa.domain.User;
 
 @Controller
 @Scope("prototype")
-public class UserAction extends BaseAction<User> {
+public class UserAction extends ModelDrivenBaseAction<User> {
 	
 	private Long departmentId;         // 接收请求中的部门id参数
 	

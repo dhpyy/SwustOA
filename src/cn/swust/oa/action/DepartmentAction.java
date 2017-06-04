@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import cn.swust.oa.base.BaseAction;
+import cn.swust.oa.base.ModelDrivenBaseAction;
 import cn.swust.oa.domain.Department;
 import cn.swust.oa.util.DepartmentUtils;
 
@@ -13,7 +13,7 @@ import com.opensymphony.xwork2.ActionContext;
 
 @Controller
 @Scope("prototype")
-public class DepartmentAction extends BaseAction<Department> {
+public class DepartmentAction extends ModelDrivenBaseAction<Department> {
 	
 	private Long parentId;       // 接收请求中的上级部门Id参数
 	
@@ -76,6 +76,10 @@ public class DepartmentAction extends BaseAction<Department> {
 		Department department = departmentService.findById(model.getId());	 // 读数据库：拿到要修改的department
 		
 		Department parent = departmentService.findById(parentId);			 // 读数据库(要修改的parent属性)
+																				
+																			 // 事务管理发生在service层，在调用service的方法完成后commit
+																			 // model变为detached状态
+		
 		department.setParent(parent);										 // 封装修改后的department
 		department.setName(model.getName());
 		department.setDescription(model.getDescription());

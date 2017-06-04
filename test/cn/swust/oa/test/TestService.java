@@ -44,6 +44,12 @@ public class TestService {
 	public List<User> findAll() {
 		return userDao.findAll();
 	}
+	
+	public User findById(Long id) {
+		User user = userDao.findById(id);
+		user.setName("yy");						// model缓存，在事务提交前的持久化状态会与  数据库表同步
+		return user;
+	}
 
 	//　测试update方法
 	public void update(User u) {

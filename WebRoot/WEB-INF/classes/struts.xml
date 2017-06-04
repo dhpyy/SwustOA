@@ -71,6 +71,50 @@
         	<result name="toList" type="redirectAction">forumManage_list</result>
         </action>
         
+        <!-- 管理流程模块 -->
+    	<action name="processDefinition_*" class="processDefinitionAction" method="{1}">
+    		<result name="list">/WEB-INF/jsp/processDefinitionAction/list.jsp</result>
+    		<result name="addUI">/WEB-INF/jsp/processDefinitionAction/addUI.jsp</result>
+    		<result name="toList" type="redirectAction">processDefinition_list</result>
+    		
+    		<!-- 返回的下载数据的result是stream类型 -->
+    		<result name="showProcessImage" type="stream">
+    			<param name="inputName">inputStream</param>		<!-- 与action参数中的inputStream对应  -->
+    		</result>
+    	</action>
+    	
+    	<!-- 流程模板模块 -->
+    	<action name="template_*" class="templateAction" method="{1}">
+    		<result name="list">/WEB-INF/jsp/templateAction/list.jsp</result>
+    		<result name="saveUI">/WEB-INF/jsp/templateAction/saveUI.jsp</result>
+    		<result name="toList" type="redirectAction">template_list</result>
+    		<!-- 下载用的用result是stream类型 -->
+    		<result name="download" type="stream">
+    			<param name="inputName">inputStream</param>
+    			<param name="contentType">application/octet-stream</param>
+    			<param name="contentDisposition">attachment;filename="${#fileName}.doc"</param>
+    		</result>
+    	</action>
+    	
+    	<!-- 执行流程模块 -->
+    	<action name="flow_*" class="flowAction" method="{1}">
+    		<result name="templateList">/WEB-INF/jsp/flowAction/templateList.jsp</result>
+    		<result name="submitUI">/WEB-INF/jsp/flowAction/submitUI.jsp</result>
+    		<result name="myApplicationList">/WEB-INF/jsp/flowAction/myApplicationList.jsp</result>
+    		<result name="toMyApplicationList" type="redirectAction">flow_myApplicationList</result>
+
+    		<result name="myTaskList">/WEB-INF/jsp/flowAction/myTaskList.jsp</result>
+    		<result name="approveUI">/WEB-INF/jsp/flowAction/approveUI.jsp</result>
+    		<result name="approvedHistory">/WEB-INF/jsp/flowAction/approvedHistory.jsp</result>
+    		<result name="toMyTaskList" type="redirectAction">flow_myTaskList</result>
+    		
+    		<!-- 下载用的用result是stream类型 -->
+    		<result name="download" type="stream">
+    			<param name="inputName">inputStream</param>
+    			<param name="contentType">application/octet-stream</param>
+    			<param name="contentDisposition">attachment;filename="${#fileName}.doc"</param>
+    		</result>
+    	</action>
     </package>
 
     <!-- Add packages here -->

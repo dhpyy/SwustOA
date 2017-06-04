@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import cn.swust.oa.base.BaseAction;
+import cn.swust.oa.base.ModelDrivenBaseAction;
 import cn.swust.oa.domain.Privilege;
 import cn.swust.oa.domain.Role;
 
@@ -14,7 +14,7 @@ import com.opensymphony.xwork2.ActionContext;
 
 @Controller
 @Scope("prototype")    // action必须设置为多例，每次请求对应的是新的action
-public class RoleAction extends BaseAction<Role> {     
+public class RoleAction extends ModelDrivenBaseAction<Role> {     
 	
 	private Long[] privilegeIds;          // 接收请求中的权限id参数 
 	                                      // 自身属性需要设置get、set方法才能被初始化

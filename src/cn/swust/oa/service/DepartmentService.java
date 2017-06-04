@@ -5,7 +5,7 @@ import java.util.List;
 import cn.swust.oa.base.DaoSupport;
 import cn.swust.oa.domain.Department;
 
-public interface DepartmentServcie extends DaoSupport<Department> {
+public interface DepartmentService extends DaoSupport<Department> {
 
 	List<Department> findChildrenList(Long parentId);
 

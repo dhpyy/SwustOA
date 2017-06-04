@@ -6,7 +6,7 @@ import cn.swust.oa.base.DaoSupportImpl;
 import cn.swust.oa.dao.UserDao;
 import cn.swust.oa.domain.User;
 
-@Deprecated
+//@Deprecated
 @Repository
 public class UserDaoImpl extends DaoSupportImpl<User> implements UserDao {
 

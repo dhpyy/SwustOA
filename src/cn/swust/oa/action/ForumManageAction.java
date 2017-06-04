@@ -5,14 +5,14 @@ import java.util.List;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import com.opensymphony.xwork2.ActionContext;
-
-import cn.swust.oa.base.BaseAction;
+import cn.swust.oa.base.ModelDrivenBaseAction;
 import cn.swust.oa.domain.Forum;
+
+import com.opensymphony.xwork2.ActionContext;
 
 @Controller
 @Scope("prototype")
-public class ForumManageAction extends BaseAction<Forum> {
+public class ForumManageAction extends ModelDrivenBaseAction<Forum> {
 	
 	public String list() throws Exception {
 		List<Forum> forumList = forumService.findAll();		// 读数据库（回显数据）

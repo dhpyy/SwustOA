@@ -1,13 +1,19 @@
 package cn.swust.oa.base;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
+
+import cn.swust.oa.cfg.Configuration;
+import cn.swust.oa.domain.PageBean;
+import cn.swust.oa.util.QueryHelper;
 
 
 // 只需将子类交给容器管理（@Repository/Service）
@@ -22,7 +28,7 @@ public class DaoSupportImpl<T> implements DaoSupport<T> {
 	private Class<T> clazz;				      // Class<T> clazz ： clazz是一个Class类
 	
 	// 构造方法与泛型无关
-	// 通过反射得到泛型Class类
+	// 通过反射得到子类所传递来的泛型Class类
 	public DaoSupportImpl() {
 		ParameterizedType pt = (ParameterizedType) this.getClass().getGenericSuperclass();  // 得到父类的Class类
 		this.clazz = (Class<T>) pt.getActualTypeArguments()[0];   // 得到父类的泛型Class类
@@ -71,6 +77,44 @@ public class DaoSupportImpl<T> implements DaoSupport<T> {
 					.setParameterList("ids", ids)//  这里是设置List型的参数
 					.list();
 		}
+	}
+
+	/**
+	 * 公共的查询分页信息的方法
+	 * 
+	 * @param pageNum
+	 * @param queryHelper
+	 *            查询语句 + 参数列表
+	 * @return
+	 */
+	public PageBean getPageBean(int pageNum, QueryHelper queryHelper) {
+		System.out.println("------------> DaoSupportImpl.getPageBean( int pageNum, QueryHelper queryHelper )");
+
+		// 获取pageSize等信息
+		int pageSize = Configuration.getPageSize();
+		List<Object> parameters = queryHelper.getParameters();
+
+		// 查询一页的数据列表
+		Query query = getSession().createQuery(queryHelper.getQueryListHql());
+		if (parameters != null && parameters.size() > 0) { // 设置参数
+			for (int i = 0; i < parameters.size(); i++) {
+				query.setParameter(i, parameters.get(i));
+			}
+		}
+		query.setFirstResult((pageNum - 1) * pageSize);
+		query.setMaxResults(pageSize);
+		List list = query.list(); // 查询
+
+		// 查询总记录数
+		query = getSession().createQuery(queryHelper.getQueryCountHql()); // 注意空格！
+		if (parameters != null && parameters.size() > 0) { // 设置参数
+			for (int i = 0; i < parameters.size(); i++) {
+				query.setParameter(i, parameters.get(i));
+			}
+		}
+		Long count = (Long) query.uniqueResult(); // 查询
+
+		return new PageBean(pageNum, pageSize, count.intValue(), list);
 	}
 
 }

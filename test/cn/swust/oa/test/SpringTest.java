@@ -1,9 +1,12 @@
 package cn.swust.oa.test;
 
 import org.hibernate.SessionFactory;
+import org.jbpm.api.ProcessEngine;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import cn.swust.oa.domain.User;
 
 public class SpringTest {
 	ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");  // Spring容器对象在监听器中创建中 
@@ -26,6 +29,16 @@ public class SpringTest {
 	@Test
 	public void testTransactional() throws Exception {
 		TestService testService = (TestService)ac.getBean("testService");
-		testService.saveTwoUsers();
+//		testService.saveTwoUsers();
+		User user = testService.findById(7L);				//　调用service方法后已经commit，model变为detached状态
+		String depart = user.getDepartment().getName();		//  此时不能使用model缓存同步数据库表数据
+		System.out.println(depart);
+	}
+	
+	// 测试Spring-JBPM:Transactional
+	@Test
+	public void testJbpm() throws Exception {
+		ProcessEngine processEngine = (ProcessEngine)ac.getBean("processEngine");
+		System.out.println(processEngine);
 	}
 }

@@ -7,10 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cn.swust.oa.base.DaoSupportImpl;
 import cn.swust.oa.domain.Department;
-import cn.swust.oa.service.DepartmentServcie;
+import cn.swust.oa.service.DepartmentService;
 
 @Service
-public class DepartmentServiceImpl extends DaoSupportImpl<Department> implements DepartmentServcie {
+public class DepartmentServiceImpl extends DaoSupportImpl<Department> implements DepartmentService {
 
 	public List<Department> findTopList() {
 		return getSession().createQuery(//

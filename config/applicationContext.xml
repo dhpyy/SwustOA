@@ -12,7 +12,7 @@
 	<!-- 导入外部properties文件-->
 	<context:property-placeholder location="classpath:jdbc.properties"/>
 	
-	<!-- 整合Hibernate的SessionFactory标签 -->
+	<!-- 整合Hibernate:注入sessionFactory对象 -->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
 		<!-- 引用hibernate配置 -->
 		<property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
@@ -49,5 +49,12 @@
 	</bean>
 	<!-- 采用注解方式  -->
 	<tx:annotation-driven transaction-manager="txManager"/>
+	
+	<!-- 整合JBPM:注入processEngine对象 -->
+	<bean id="springHelper" class="org.jbpm.pvm.internal.processengine.SpringHelper">
+    	<property name="jbpmCfg" value="jbpm.cfg.xml"></property>
+	</bean>
+ 	<bean id="processEngine" factory-bean="springHelper" factory-method="createProcessEngine" />
+    
 	
 </beans>
